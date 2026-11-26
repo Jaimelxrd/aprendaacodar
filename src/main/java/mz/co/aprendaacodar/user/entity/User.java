@@ -28,4 +28,5 @@ public class User extends BaseEntity {
     public void updateProfile(String first, String last, String phone){firstName=first;lastName=last;phoneNumber=phone;}
  public void setStatus(UserStatus status){this.status=status;} public void setLastLoginAt(Instant value){lastLoginAt=value;} public void setEmail(String email){this.email=email.trim().toLowerCase();}
     public void setPasswordHash(String value){passwordHash=value;} public void setProfilePhotoKey(String value){profilePhotoKey=value;}
+    public void setEmailVerified(boolean value){emailVerified=value;}
 }

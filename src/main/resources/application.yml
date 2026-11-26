@@ -48,6 +48,11 @@ app:
   mail:
     enabled: ${MAIL_ENABLED:false}
     from: ${MAIL_FROM:}
+  bootstrap-admin:
+    first-name: ${APP_ADMIN_FIRST_NAME:}
+    last-name: ${APP_ADMIN_LAST_NAME:}
+    email: ${APP_ADMIN_EMAIL:}
+    password: ${APP_ADMIN_PASSWORD:}
 springdoc:
   swagger-ui:
     path: /swagger-ui.html
