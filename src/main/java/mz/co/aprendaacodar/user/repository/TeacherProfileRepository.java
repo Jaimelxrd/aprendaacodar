@@ -1,0 +1,2 @@
+package mz.co.aprendaacodar.user.repository;import mz.co.aprendaacodar.user.entity.TeacherProfile;import org.springframework.data.jpa.repository.JpaRepository;import java.util.*;
+public interface TeacherProfileRepository extends JpaRepository<TeacherProfile,UUID>{Optional<TeacherProfile> findByUserId(UUID id);List<TeacherProfile> findAllByUserStatusNot(mz.co.aprendaacodar.common.enums.Enums.UserStatus status);}

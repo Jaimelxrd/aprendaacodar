@@ -1,0 +1,1 @@
+package mz.co.aprendaacodar.question.repository;import mz.co.aprendaacodar.question.entity.LessonQuestion;import org.springframework.data.jpa.repository.JpaRepository;import java.util.*;public interface QuestionRepository extends JpaRepository<LessonQuestion,UUID>{List<LessonQuestion> findAllByLessonIdOrderByCreatedAt(UUID lessonId);}

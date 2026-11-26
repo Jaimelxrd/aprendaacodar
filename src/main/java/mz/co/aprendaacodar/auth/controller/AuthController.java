@@ -1,0 +1,16 @@
+package mz.co.aprendaacodar.auth.controller;
+import jakarta.servlet.http.*;import jakarta.validation.Valid;import mz.co.aprendaacodar.auth.dto.AuthDtos.*;import mz.co.aprendaacodar.auth.service.AuthService;import mz.co.aprendaacodar.user.repository.UserRepository;import org.springframework.beans.factory.annotation.Value;import org.springframework.http.*;import org.springframework.security.core.Authentication;import org.springframework.web.bind.annotation.*;import java.util.UUID;
+@RestController @RequestMapping("/api/v1/auth")
+public class AuthController {
+ private final AuthService auth;private final UserRepository users;private final mz.co.aprendaacodar.auth.service.PasswordResetService passwordReset;private final boolean secure;
+ public AuthController(AuthService auth,UserRepository users,mz.co.aprendaacodar.auth.service.PasswordResetService passwordReset,@Value("${spring.profiles.active:dev}") String profile){this.auth=auth;this.users=users;this.passwordReset=passwordReset;this.secure=profile.contains("prod");}
+ @PostMapping("/register") public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest request,HttpServletResponse response){return issue(auth.register(request),response,HttpStatus.CREATED);}
+ @PostMapping("/login") public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request,HttpServletResponse response){return issue(auth.login(request),response,HttpStatus.OK);}
+ @PostMapping("/refresh") public ResponseEntity<AuthResponse> refresh(@CookieValue(name="refreshToken",required=false) String token,HttpServletResponse response){return issue(auth.refresh(token),response,HttpStatus.OK);}
+ @PostMapping("/logout") public ResponseEntity<Void> logout(@CookieValue(name="refreshToken",required=false) String token,HttpServletResponse response){auth.logout(token);clearCookie(response);return ResponseEntity.noContent().build();}
+ @PostMapping("/forgot-password") public ResponseEntity<MessageResponse> forgotPassword(@Valid @RequestBody ForgotPasswordRequest request){passwordReset.requestReset(request);return ResponseEntity.accepted().body(new MessageResponse("Se a conta existir, será enviado um e-mail com as instruções de recuperação."));}
+ @PostMapping("/reset-password") public ResponseEntity<Void> resetPassword(@Valid @RequestBody ResetPasswordRequest request){passwordReset.reset(request);return ResponseEntity.noContent().build();}
+ @GetMapping("/me") public UserResponse me(Authentication a){return AuthService.user(users.findById((UUID)a.getPrincipal()).orElseThrow());}
+ private ResponseEntity<AuthResponse> issue(AuthResponse result,HttpServletResponse response,HttpStatus status){String raw=auth.takeRefreshToken();ResponseCookie cookie=ResponseCookie.from("refreshToken",raw).httpOnly(true).secure(secure).sameSite("Strict").path("/api/v1/auth").maxAge(60L*60*24*30).build();response.addHeader(HttpHeaders.SET_COOKIE,cookie.toString());return ResponseEntity.status(status).body(result);}
+ private void clearCookie(HttpServletResponse response){response.addHeader(HttpHeaders.SET_COOKIE,ResponseCookie.from("refreshToken","").httpOnly(true).secure(secure).sameSite("Strict").path("/api/v1/auth").maxAge(0).build().toString());}
+}

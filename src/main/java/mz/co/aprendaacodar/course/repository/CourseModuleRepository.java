@@ -1,0 +1,1 @@
+package mz.co.aprendaacodar.course.repository;import mz.co.aprendaacodar.course.entity.CourseModule;import org.springframework.data.jpa.repository.JpaRepository;import java.util.*;public interface CourseModuleRepository extends JpaRepository<CourseModule,UUID>{List<CourseModule> findAllByCourseIdOrderByPosition(UUID id);}

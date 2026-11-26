@@ -1,0 +1,10 @@
+package mz.co.aprendaacodar.storage;
+import mz.co.aprendaacodar.enrollment.service.EnrollmentService;import mz.co.aprendaacodar.course.service.CourseService;import mz.co.aprendaacodar.user.service.UserService;import org.springframework.security.access.prepost.PreAuthorize;import org.springframework.security.core.Authentication;import org.springframework.web.bind.annotation.*;import org.springframework.web.multipart.MultipartFile;import java.util.*;
+@RestController @RequestMapping("/api/v1") public class UploadController {
+ private final StorageService storage;private final EnrollmentService enrollments;private final CourseService courses;private final UserService users;public UploadController(StorageService s,EnrollmentService e,CourseService c,UserService u){storage=s;enrollments=e;courses=c;users=u;}
+ public record UploadResponse(String fileKey,String url){}
+ @PostMapping("/uploads/profile-photo") public UploadResponse profile(Authentication a,@RequestPart("file") MultipartFile f){UUID id=(UUID)a.getPrincipal();String k=storage.upload("profiles/"+id,f,true);users.updatePhoto(id,k);return new UploadResponse(k,storage.url(k,true));}
+ @PostMapping("/uploads/course-cover") @PreAuthorize("hasAnyRole('TEACHER','ADMIN')") public UploadResponse course(Authentication a,@RequestParam UUID courseId,@RequestPart("file") MultipartFile f){courses.assertCanManage((UUID)a.getPrincipal(),courseId);String k=storage.upload("course-covers/"+courseId,f,true);return new UploadResponse(k,storage.url(k,true));}
+ @PostMapping("/uploads/blog-cover") @PreAuthorize("hasRole('ADMIN')") public UploadResponse blog(@RequestPart("file") MultipartFile f){String k=storage.upload("blog-covers",f,true);return new UploadResponse(k,storage.url(k,true));}
+ @PostMapping("/uploads/payment-proof") @PreAuthorize("hasRole('STUDENT')") public UploadResponse proof(Authentication a,@RequestParam UUID enrollmentId,@RequestPart("file") MultipartFile f){UUID student=(UUID)a.getPrincipal();enrollments.assertStudentOwner(student,enrollmentId);String k=storage.upload("payment-proofs/"+student+"/"+enrollmentId,f,false);return new UploadResponse(k,null);}
+}

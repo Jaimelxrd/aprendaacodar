@@ -1,0 +1,3 @@
+package mz.co.aprendaacodar.question.entity;
+import jakarta.persistence.*;import mz.co.aprendaacodar.common.entity.BaseEntity;import mz.co.aprendaacodar.user.entity.User;
+@Entity @Table(name="question_replies") public class QuestionReply extends BaseEntity {@ManyToOne(optional=false,fetch=FetchType.LAZY) private LessonQuestion question;@ManyToOne(optional=false,fetch=FetchType.LAZY) private User author;@Column(nullable=false,columnDefinition="TEXT") private String content;protected QuestionReply(){}public QuestionReply(LessonQuestion q,User a,String c){question=q;author=a;content=c;}public User getAuthor(){return author;}public String getContent(){return content;}public LessonQuestion getQuestion(){return question;}}

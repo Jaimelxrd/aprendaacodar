@@ -1,0 +1,2 @@
+package mz.co.aprendaacodar.payment.repository;import mz.co.aprendaacodar.payment.entity.Payment;import mz.co.aprendaacodar.common.enums.Enums.PaymentStatus;import org.springframework.data.jpa.repository.JpaRepository;import java.util.*;
+public interface PaymentRepository extends JpaRepository<Payment,UUID>{List<Payment> findAllByEnrollmentStudentId(UUID studentId);List<Payment> findAllByStatus(PaymentStatus status);boolean existsByTransactionReference(String ref);List<Payment> findAllByEnrollmentId(UUID enrollmentId);}

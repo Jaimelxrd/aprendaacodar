@@ -1,0 +1,1 @@
+package mz.co.aprendaacodar.course.repository;import mz.co.aprendaacodar.course.entity.LessonResource;import org.springframework.data.jpa.repository.JpaRepository;import java.util.*;public interface LessonResourceRepository extends JpaRepository<LessonResource,UUID>{List<LessonResource> findAllByLessonId(UUID lessonId);}
