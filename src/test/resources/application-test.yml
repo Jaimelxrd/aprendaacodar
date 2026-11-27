@@ -1,0 +1,38 @@
+spring:
+  jpa:
+    show-sql: false
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+        format_sql: false
+        highlight_sql: false
+        show_sql: false
+  datasource:
+    url: jdbc:h2:mem:aprendaacodar;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;DATABASE_TO_LOWER=TRUE
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+  flyway:
+    enabled: false
+  mail:
+    host: localhost
+management:
+  health:
+    mail:
+      enabled: false
+app:
+  jwt:
+    secret: test-secret-test-secret-test-secret-32-bytes-min
+  mail:
+    enabled: false
+  bootstrap-admin:
+    first-name:
+    last-name:
+    email:
+    password:
+logging:
+  level:
+    root: WARN
+    org.hibernate.SQL: WARN

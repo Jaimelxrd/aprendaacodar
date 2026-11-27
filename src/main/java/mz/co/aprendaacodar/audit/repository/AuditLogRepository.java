@@ -1,1 +1,12 @@
-package mz.co.aprendaacodar.audit.repository;import mz.co.aprendaacodar.audit.entity.AuditLog;import org.springframework.data.jpa.repository.JpaRepository;import java.util.*;public interface AuditLogRepository extends JpaRepository<AuditLog,UUID>{List<AuditLog> findAllByOrderByCreatedAtDesc();}
+package mz.co.aprendaacodar.audit.repository;
+
+import mz.co.aprendaacodar.audit.entity.AuditLog;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.UUID;
+
+public interface AuditLogRepository extends JpaRepository<AuditLog, UUID> {
+    Page<AuditLog> findAllByOrderByCreatedAtDesc(Pageable pageable);
+}

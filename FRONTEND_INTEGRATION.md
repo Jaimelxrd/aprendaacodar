@@ -52,7 +52,7 @@ Erros comuns:
 | 503 | `SERVICE_UNAVAILABLE` | Serviço externo indisponível; permitir tentar novamente |
 | 500 | `INTERNAL_ERROR` | Mensagem genérica e opção de repetir |
 
-Listagens paginadas recebem parâmetros Spring Data, por exemplo `?page=0&size=20&sort=createdAt,desc`. A página começa em zero. Resposta:
+Listagens paginadas recebem parâmetros Spring Data, por exemplo `?page=0&size=20&sort=createdAt,desc`. A página começa em zero. Se `page`/`size` forem omitidos, o backend usa página `0` com tamanho `20`; o tamanho máximo aceite é `100`. Resposta:
 
 ```json
 {
@@ -190,6 +190,8 @@ Post: `{id,title,slug,excerpt,content,coverImageUrl,authorId,authorName,publishe
 | `PUT /admin/teachers/{id}` | Admin | Atualizar dados/perfil profissional (sem password) |
 | `PATCH /admin/teachers/{id}/deactivate` | Admin | Desativar professor |
 | `GET /admin/audit-logs` | Admin | Logs paginados |
+
+Os itens de auditoria retornam `{id,actorId,action,entityType,entityId,details,createdAt}` e vêm ordenados do mais recente para o mais antigo. O backend regista ações administrativas e de ciclo de vida, incluindo alterações de cursos, criação/edição/desativação de professores, bloqueio/desbloqueio de utilizadores e gestão de artigos/comentários. Trate `details` como um objeto variável conforme a ação.
 
 ## 5. Modelos e validações principais
 
