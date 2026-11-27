@@ -3,8 +3,11 @@ import jakarta.validation.Valid;import mz.co.aprendaacodar.course.dto.CourseDtos
 import mz.co.aprendaacodar.common.response.PageResponse;import org.springframework.data.domain.Pageable;
 @RestController @RequestMapping("/api/v1") public class CourseController {
  private final CourseService service;public CourseController(CourseService s){service=s;}
- @GetMapping("/public/courses") public PageResponse<CourseResponse> publicCourses(@RequestParam(required=false) String q,Pageable pageable){return service.searchPublished(q,pageable);}
- @GetMapping("/public/courses/{slug}") public CourseResponse publicCourse(@PathVariable String slug){return service.publicBySlug(slug);}
+ @GetMapping({"/public/courses", "/courses"}) public PageResponse<CourseResponse> publicCourses(@RequestParam(required=false) String q,Pageable pageable){return service.searchPublished(q,pageable);}
+ @GetMapping({"/public/courses/{courseRef}", "/courses/{courseRef}"}) public CourseResponse publicCourse(@PathVariable String courseRef){
+  try { return service.publicById(UUID.fromString(courseRef)); }
+  catch (IllegalArgumentException ignored) { return service.publicBySlug(courseRef); }
+ }
  @PostMapping("/teacher/courses") @org.springframework.security.access.prepost.PreAuthorize("hasRole('TEACHER')") public CourseResponse create(Authentication a,@Valid @RequestBody CourseRequest r){return service.create((UUID)a.getPrincipal(),r,false);}
  @GetMapping("/teacher/courses") @org.springframework.security.access.prepost.PreAuthorize("hasRole('TEACHER')") public PageResponse<CourseResponse> mine(Authentication a,Pageable pageable){return service.mine((UUID)a.getPrincipal(),pageable);}
  @GetMapping("/teacher/courses/{id}") @org.springframework.security.access.prepost.PreAuthorize("hasRole('TEACHER')") public CourseResponse getMine(Authentication a,@PathVariable UUID id){return service.getMine((UUID)a.getPrincipal(),id);}

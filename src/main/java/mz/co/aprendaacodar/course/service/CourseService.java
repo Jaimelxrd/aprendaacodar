@@ -43,12 +43,21 @@ public class CourseService {
     @Transactional(readOnly = true)
     public PageResponse<CourseResponse> searchPublished(String q, Pageable pageable) {
         String query = q == null || q.isBlank() ? null : q.trim();
-        return PageResponse.from(courses.searchPublished(CourseStatus.PUBLISHED, query, pageable), this::map);
+        var result = query == null
+                ? courses.findAllByStatus(CourseStatus.PUBLISHED, pageable)
+                : courses.searchPublished(CourseStatus.PUBLISHED, query, pageable);
+        return PageResponse.from(result, this::map);
     }
 
     @Transactional(readOnly = true)
     public CourseResponse publicBySlug(String slug) {
         return map(courses.findBySlugAndStatus(slug, CourseStatus.PUBLISHED)
+                .orElseThrow(() -> new ResourceNotFoundException("Curso não encontrado.")));
+    }
+
+    @Transactional(readOnly = true)
+    public CourseResponse publicById(UUID id) {
+        return map(courses.findByIdAndStatus(id, CourseStatus.PUBLISHED)
                 .orElseThrow(() -> new ResourceNotFoundException("Curso não encontrado.")));
     }
 
