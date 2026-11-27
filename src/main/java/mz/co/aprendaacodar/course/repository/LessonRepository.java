@@ -15,4 +15,5 @@ public interface LessonRepository extends JpaRepository<Lesson, UUID> {
     Page<Lesson> findAllByCourseIdOrderByPosition(UUID id, Pageable pageable);
     List<Lesson> findAllByModuleIdOrderByPosition(UUID id);
     boolean existsByModuleId(UUID id);
+    long countByCourseId(UUID courseId);
 }
