@@ -7,4 +7,5 @@ import jakarta.validation.Valid;import mz.co.aprendaacodar.question.dto.Question
  @GetMapping("/questions/{id}") public Response get(Authentication a,@PathVariable UUID id){return service.get((UUID)a.getPrincipal(),id);}
  @PostMapping("/questions/{id}/replies") @PreAuthorize("hasAnyRole('TEACHER','ADMIN')") public Response reply(Authentication a,@PathVariable UUID id,@Valid @RequestBody ContentRequest r){return service.reply((UUID)a.getPrincipal(),id,r.content());}
  @PatchMapping("/questions/{id}/close") @PreAuthorize("hasAnyRole('TEACHER','ADMIN')") public void close(Authentication a,@PathVariable UUID id){service.close((UUID)a.getPrincipal(),id);}
+ @GetMapping("/admin/questions") @PreAuthorize("hasRole('ADMIN')") public PageResponse<Response> adminQuestions(@RequestParam(required=false) mz.co.aprendaacodar.common.enums.Enums.QuestionStatus status,@RequestParam(required=false) UUID courseId,@RequestParam(required=false) UUID studentId,Pageable pageable){return service.adminQuestions(status,courseId,studentId,pageable);}
 }

@@ -48,4 +48,14 @@ public class TeacherController {
     public void deactivate(Authentication authentication, @PathVariable UUID id) {
         service.deactivate((UUID) authentication.getPrincipal(), id);
     }
+
+    @PatchMapping("/{id}/activate")
+    public TeacherResponse activate(Authentication authentication, @PathVariable UUID id) {
+        return service.activate((UUID) authentication.getPrincipal(), id);
+    }
+
+    @GetMapping("/{id}/courses")
+    public PageResponse<TeacherService.TeacherCourseResponse> courses(@PathVariable UUID id, Pageable pageable) {
+        return service.courses(id, pageable);
+    }
 }

@@ -10,6 +10,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface EnrollmentRepository extends JpaRepository<CourseEnrollment, UUID> {
+    long countByStatus(EnrollmentStatus status);
     Optional<CourseEnrollment> findByStudentIdAndCourseId(UUID student, UUID course);
     Page<CourseEnrollment> findAllByStudentId(UUID student, Pageable pageable);
     Page<CourseEnrollment> findAllByCourseId(UUID courseId, Pageable pageable);

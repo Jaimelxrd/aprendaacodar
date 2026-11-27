@@ -14,6 +14,7 @@ import mz.co.aprendaacodar.user.entity.TeacherProfile;
 import mz.co.aprendaacodar.user.entity.User;
 import mz.co.aprendaacodar.user.repository.TeacherProfileRepository;
 import mz.co.aprendaacodar.user.repository.UserRepository;
+import mz.co.aprendaacodar.course.repository.CourseRepository;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -29,14 +30,16 @@ public class TeacherService {
     private final PasswordEncoder encoder;
     private final RefreshTokenRepository tokens;
     private final AuditService audit;
+    private final CourseRepository courses;
 
     public TeacherService(UserRepository users, TeacherProfileRepository profiles, PasswordEncoder encoder,
-                          RefreshTokenRepository tokens, AuditService audit) {
+                          RefreshTokenRepository tokens, AuditService audit, CourseRepository courses) {
         this.users = users;
         this.profiles = profiles;
         this.encoder = encoder;
         this.tokens = tokens;
         this.audit = audit;
+        this.courses = courses;
     }
 
     @Transactional
@@ -85,6 +88,24 @@ public class TeacherService {
         profile.getUser().setStatus(UserStatus.INACTIVE);
         tokens.revokeByUserId(id);
         audit.record(admin(adminId), "TEACHER_DEACTIVATED", "User", id, Map.of());
+    }
+
+    @Transactional
+    public TeacherResponse activate(UUID adminId, UUID id) {
+        TeacherProfile profile = profiles.findByUserId(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Professor não encontrado."));
+        profile.getUser().setStatus(UserStatus.ACTIVE);
+        audit.record(admin(adminId), "TEACHER_ACTIVATED", "User", id, Map.of());
+        return map(profile);
+    }
+
+    public record TeacherCourseResponse(UUID id, String title, String slug, String status) {}
+
+    @Transactional(readOnly = true)
+    public PageResponse<TeacherCourseResponse> courses(UUID id, Pageable pageable) {
+        if (profiles.findByUserId(id).isEmpty()) throw new ResourceNotFoundException("Professor não encontrado.");
+        return PageResponse.from(courses.findAllByTeacherId(id, pageable),
+                c -> new TeacherCourseResponse(c.getId(), c.getTitle(), c.getSlug(), c.getStatus().name()));
     }
 
     private User admin(UUID id) {

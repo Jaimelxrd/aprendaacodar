@@ -257,3 +257,24 @@ O `UserResponse.profilePhotoUrl` de `GET /users/me` e `GET /admin/users/{id}` co
 ### Listagem administrativa do blog
 
 `GET /admin/blog/posts` (Admin) lista artigos de todos os estados de forma paginada. Cada `PostResponse` inclui `status`, permitindo distinguir rascunhos, artigos publicados e arquivados.
+
+## 10. Administração, perfil profissional e comprovativos
+
+| Método e rota | Acesso | Uso |
+|---|---|---|
+| `GET /public/settings` | Público | Dados de pagamento e informação institucional |
+| `GET /settings` | Autenticado | Mesmo conteúdo para utilizadores autenticados |
+| `PUT /admin/settings` | Admin | Atualizar `mpesaNumber`, `emolaNumber`, `accountHolderName`, `paymentInstructions` e `institutionalInformation` |
+| `GET /admin/dashboard` | Admin | Totais da plataforma, receita de pagamentos aprovados e dez atividades recentes |
+| `GET /teacher/profile` | Professor | Perfil profissional do próprio professor |
+| `PUT /teacher/profile` | Professor | Atualizar `profilePhotoKey`, `phoneNumber`, `biography`, `specialization` e `professionalTitle` |
+| `PATCH /admin/teachers/{id}/activate` | Admin | Reativar professor desativado |
+| `GET /admin/teachers/{id}/courses` | Admin | Cursos do professor, paginados |
+| `GET /admin/questions` | Admin | Dúvidas globais paginadas; filtros opcionais `status`, `courseId` e `studentId` |
+| `POST /questions/{id}/replies` | Professor responsável ou Admin | Responder e gravar a resposta com autor no histórico |
+| `GET /admin/payments/{id}/proof` | Admin | Obter URL assinada de curta duração para o comprovativo |
+| `GET /payments/{id}/proof` | Estudante dono | Obter URL assinada do próprio comprovativo |
+
+As respostas de inscrição incluem `revokedAt` e `revocationReason`, quando aplicáveis. Revogar exige `reason`, que fica registada na inscrição e na auditoria. Respostas de aprovação, rejeição e arquivo de cursos devolvem o curso atualizado; a rejeição inclui `rejectionReason`.
+
+O download de materiais de aula verifica a matrícula ativa do estudante. Professores responsáveis e administradores podem consultar os materiais dos cursos que gerem. Para gerir currículos não publicados, Admin pode usar `GET /admin/courses/{courseId}/modules` e `GET /admin/courses/{courseId}/lessons`.

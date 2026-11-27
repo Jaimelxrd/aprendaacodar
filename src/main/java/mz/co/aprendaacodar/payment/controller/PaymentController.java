@@ -6,6 +6,8 @@ import jakarta.validation.Valid;import mz.co.aprendaacodar.payment.dto.PaymentDt
  @GetMapping("/payments/me") @PreAuthorize("hasRole('STUDENT')") public PageResponse<Response> mine(Authentication a,Pageable pageable){return service.mine((UUID)a.getPrincipal(),pageable);}
  @GetMapping("/admin/payments") @PreAuthorize("hasRole('ADMIN')") public PageResponse<Response> all(Pageable pageable){return service.all(pageable);}
  @GetMapping("/admin/payments/{id}") @PreAuthorize("hasRole('ADMIN')") public Response get(@PathVariable UUID id){return service.get(id);}
+ @GetMapping("/admin/payments/{id}/proof") @PreAuthorize("hasRole('ADMIN')") public Map<String,String> proofAdmin(Authentication a,@PathVariable UUID id){return Map.of("downloadUrl",service.proofUrl((UUID)a.getPrincipal(),id,true));}
+ @GetMapping("/payments/{id}/proof") @PreAuthorize("hasRole('STUDENT')") public Map<String,String> proofMine(Authentication a,@PathVariable UUID id){return Map.of("downloadUrl",service.proofUrl((UUID)a.getPrincipal(),id,false));}
  @GetMapping("/admin/users/{studentId}/payments") @PreAuthorize("hasRole('ADMIN')") public PageResponse<Response> byStudent(@PathVariable UUID studentId,Pageable pageable){return service.byStudent(studentId,pageable);}
  @PatchMapping("/admin/payments/{id}/approve") @PreAuthorize("hasRole('ADMIN')") public Response approve(Authentication a,@PathVariable UUID id){return service.approve((UUID)a.getPrincipal(),id);}
  @PatchMapping("/admin/payments/{id}/reject") @PreAuthorize("hasRole('ADMIN')") public Response reject(Authentication a,@PathVariable UUID id,@Valid @RequestBody ReviewRequest r){return service.reject((UUID)a.getPrincipal(),id,r.rejectionReason());}

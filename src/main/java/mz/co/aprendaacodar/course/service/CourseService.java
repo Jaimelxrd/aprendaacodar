@@ -124,24 +124,29 @@ public class CourseService {
     }
 
     @Transactional
-    public void approve(UUID actorId, UUID id) {
+    public CourseResponse approve(UUID actorId, UUID id) {
         User admin = user(actorId);
-        find(id).approve(admin);
+        Course course = find(id);
+        course.approve(admin);
         audit.record(admin, "COURSE_APPROVED", "Course", id, Map.of());
+        return map(course);
     }
 
     @Transactional
-    public void reject(UUID actorId, UUID id, String reason) {
+    public CourseResponse reject(UUID actorId, UUID id, String reason) {
         User admin = user(actorId);
-        find(id).reject(admin, reason);
+        Course course = find(id);
+        course.reject(admin, reason);
         audit.record(admin, "COURSE_REJECTED", "Course", id, Map.of("reason", reason));
+        return map(course);
     }
 
     @Transactional
-    public void archive(UUID actorId, UUID id) {
+    public CourseResponse archive(UUID actorId, UUID id) {
         Course course = find(id);
         course.archive();
         audit.record(user(actorId), "COURSE_ARCHIVED", "Course", id, Map.of());
+        return map(course);
     }
 
     private User user(UUID id) {
@@ -158,6 +163,6 @@ public class CourseService {
                 course.getPrice(), course.getCurrency(), course.getDurationHours(),
                 new TeacherSummary(course.getTeacher().getId(), course.getTeacher().getFirstName(),
                         course.getTeacher().getLastName(), null), course.getCurriculumMode(), course.getStatus(),
-                course.getPrerequisites(), course.getLearningOutcomes());
+                course.getPrerequisites(), course.getLearningOutcomes(), course.getRejectionReason());
     }
 }

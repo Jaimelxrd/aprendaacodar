@@ -10,6 +10,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface CourseRepository extends JpaRepository<Course, UUID> {
+    long countByStatus(CourseStatus status);
     @org.springframework.data.jpa.repository.Query("select c from Course c where c.status = :status and (:q is null or lower(c.title) like lower(concat('%', :q, '%')) or lower(c.shortDescription) like lower(concat('%', :q, '%')))")
     Page<Course> searchPublished(@org.springframework.data.repository.query.Param("status") CourseStatus status, @org.springframework.data.repository.query.Param("q") String q, Pageable pageable);
     Optional<Course> findBySlugAndStatus(String slug, CourseStatus status);

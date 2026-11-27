@@ -12,6 +12,7 @@ import java.util.UUID;
 public interface LessonRepository extends JpaRepository<Lesson, UUID> {
     List<Lesson> findAllByCourseIdOrderByPosition(UUID id);
     Page<Lesson> findAllByCourseIdAndStatusOrderByPosition(UUID id, LessonStatus status, Pageable pageable);
+    Page<Lesson> findAllByCourseIdOrderByPosition(UUID id, Pageable pageable);
     List<Lesson> findAllByModuleIdOrderByPosition(UUID id);
     boolean existsByModuleId(UUID id);
 }
