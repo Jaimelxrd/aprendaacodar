@@ -41,6 +41,12 @@ public class CourseService {
     }
 
     @Transactional(readOnly = true)
+    public PageResponse<CourseResponse> searchPublished(String q, Pageable pageable) {
+        String query = q == null || q.isBlank() ? null : q.trim();
+        return PageResponse.from(courses.searchPublished(CourseStatus.PUBLISHED, query, pageable), this::map);
+    }
+
+    @Transactional(readOnly = true)
     public CourseResponse publicBySlug(String slug) {
         return map(courses.findBySlugAndStatus(slug, CourseStatus.PUBLISHED)
                 .orElseThrow(() -> new ResourceNotFoundException("Curso não encontrado.")));
@@ -151,6 +157,7 @@ public class CourseService {
                 course.getDescription(), course.getCoverImageKey() == null ? null : storage.url(course.getCoverImageKey(), true),
                 course.getPrice(), course.getCurrency(), course.getDurationHours(),
                 new TeacherSummary(course.getTeacher().getId(), course.getTeacher().getFirstName(),
-                        course.getTeacher().getLastName(), null), course.getCurriculumMode(), course.getStatus());
+                        course.getTeacher().getLastName(), null), course.getCurriculumMode(), course.getStatus(),
+                course.getPrerequisites(), course.getLearningOutcomes());
     }
 }

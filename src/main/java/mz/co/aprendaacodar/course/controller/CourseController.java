@@ -3,7 +3,7 @@ import jakarta.validation.Valid;import mz.co.aprendaacodar.course.dto.CourseDtos
 import mz.co.aprendaacodar.common.response.PageResponse;import org.springframework.data.domain.Pageable;
 @RestController @RequestMapping("/api/v1") public class CourseController {
  private final CourseService service;public CourseController(CourseService s){service=s;}
- @GetMapping("/public/courses") public PageResponse<CourseResponse> publicCourses(Pageable pageable){return service.published(pageable);}
+ @GetMapping("/public/courses") public PageResponse<CourseResponse> publicCourses(@RequestParam(required=false) String q,Pageable pageable){return service.searchPublished(q,pageable);}
  @GetMapping("/public/courses/{slug}") public CourseResponse publicCourse(@PathVariable String slug){return service.publicBySlug(slug);}
  @PostMapping("/teacher/courses") @org.springframework.security.access.prepost.PreAuthorize("hasRole('TEACHER')") public CourseResponse create(Authentication a,@Valid @RequestBody CourseRequest r){return service.create((UUID)a.getPrincipal(),r,false);}
  @GetMapping("/teacher/courses") @org.springframework.security.access.prepost.PreAuthorize("hasRole('TEACHER')") public PageResponse<CourseResponse> mine(Authentication a,Pageable pageable){return service.mine((UUID)a.getPrincipal(),pageable);}

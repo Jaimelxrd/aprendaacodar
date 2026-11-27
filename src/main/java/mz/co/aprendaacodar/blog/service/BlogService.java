@@ -48,6 +48,11 @@ public class BlogService {
     }
 
     @Transactional(readOnly = true)
+    public PageResponse<PostResponse> adminPosts(Pageable pageable) {
+        return PageResponse.from(posts.findAll(pageable), this::post);
+    }
+
+    @Transactional(readOnly = true)
     public PostResponse publicPost(String slug) {
         return post(posts.findBySlugAndStatus(slug, BlogPostStatus.PUBLISHED)
                 .orElseThrow(() -> new ResourceNotFoundException("Artigo não encontrado.")));
@@ -127,7 +132,7 @@ public class BlogService {
         return new PostResponse(post.getId(), post.getTitle(), post.getSlug(), post.getExcerpt(), post.getContent(),
                 post.getCoverImageKey() == null ? null : storage.url(post.getCoverImageKey(), true),
                 post.getAuthor().getId(), post.getAuthor().getFirstName() + " " + post.getAuthor().getLastName(),
-                post.getPublishedAt());
+                post.getPublishedAt(), post.getStatus());
     }
 
     private CommentResponse comment(BlogComment comment) {

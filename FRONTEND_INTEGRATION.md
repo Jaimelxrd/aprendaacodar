@@ -224,3 +224,36 @@ Os itens de auditoria retornam `{id,actorId,action,entityType,entityId,details,c
 ## 8. Limites conhecidos a confirmar no Swagger durante implementação
 
 Este guia foi produzido a partir dos controllers, DTOs e configuração existentes. Algumas respostas não têm paginação (por exemplo ações `void` devolvem 204); opções de ordenação podem variar por repositório. A API não descreve aqui um gateway de pagamento automático: o pagamento é submetido com método, referência de transação e comprovativo para revisão administrativa. O frontend deve refletir exatamente esse fluxo manual.
+
+## 9. Rotas e campos adicionados recentemente
+
+Estas operações estão disponíveis além dos fluxos descritos anteriormente. Todas as rotas continuam sob `/api/v1`.
+
+### Perfil e palavra-passe
+
+| Método e rota | Acesso | Corpo / resultado |
+|---|---|---|
+| `PUT /users/me` | Autenticado | `{firstName,lastName,phoneNumber?,profilePhotoKey?}` → `UserResponse`. `profilePhotoKey` deve ser a chave devolvida por `POST /uploads/profile-photo` para o próprio utilizador. |
+| `PUT /users/me/password` | Autenticado | `{currentPassword,newPassword,confirmPassword}` → 200 sem corpo. A nova palavra-passe deve ter 10–72 caracteres; sessões refresh existentes são revogadas. |
+| `PUT /admin/users/{id}` | Admin | `{firstName,lastName,phoneNumber?}` → `UserResponse`. Esta rota edita utilizadores com role `STUDENT`. |
+
+O `UserResponse.profilePhotoUrl` de `GET /users/me` e `GET /admin/users/{id}` contém a URL pública da fotografia quando há uma associada.
+
+### Inscrições e pagamentos por estudante
+
+| Método e rota | Acesso | Uso |
+|---|---|---|
+| `GET /admin/users/{studentId}/enrollments` | Admin | Inscrições do estudante indicado, paginadas. |
+| `GET /admin/users/{studentId}/payments` | Admin | Pagamentos do estudante indicado, paginados. |
+
+### Estudantes de um curso para o professor
+
+`GET /teacher/courses/{courseId}/students` devolve uma página com `enrollmentId`, `studentId`, `firstName`, `lastName`, `email`, `enrolledAt` e `status`. Só o professor dono do curso pode consultar a lista.
+
+### Pesquisa e detalhe do curso
+
+`GET /public/courses` aceita o parâmetro opcional `q` para pesquisar por título ou resumo, mantendo a paginação usual. A resposta de curso agora inclui também `prerequisites` e `learningOutcomes`.
+
+### Listagem administrativa do blog
+
+`GET /admin/blog/posts` (Admin) lista artigos de todos os estados de forma paginada. Cada `PostResponse` inclui `status`, permitindo distinguir rascunhos, artigos publicados e arquivados.

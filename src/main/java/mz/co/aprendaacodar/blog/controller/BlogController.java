@@ -28,6 +28,10 @@ public class BlogController {
         return service.publicPosts(pageable);
     }
 
+    @GetMapping("/admin/blog/posts")
+    @PreAuthorize("hasRole('ADMIN')")
+    public PageResponse<PostResponse> adminPosts(Pageable pageable) { return service.adminPosts(pageable); }
+
     @GetMapping("/public/blog/posts/{slug}")
     public PostResponse post(@PathVariable String slug) {
         return service.publicPost(slug);

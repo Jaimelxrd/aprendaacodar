@@ -12,6 +12,7 @@ import java.util.UUID;
 public interface EnrollmentRepository extends JpaRepository<CourseEnrollment, UUID> {
     Optional<CourseEnrollment> findByStudentIdAndCourseId(UUID student, UUID course);
     Page<CourseEnrollment> findAllByStudentId(UUID student, Pageable pageable);
+    Page<CourseEnrollment> findAllByCourseId(UUID courseId, Pageable pageable);
     boolean existsByStudentIdAndCourseIdAndStatus(UUID student, UUID course, EnrollmentStatus status);
     Page<CourseEnrollment> findAllByStatus(EnrollmentStatus status, Pageable pageable);
 }

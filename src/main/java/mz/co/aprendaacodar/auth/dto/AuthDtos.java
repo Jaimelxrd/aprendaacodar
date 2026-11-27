@@ -6,7 +6,8 @@ public final class AuthDtos {
  public record LoginRequest(@NotBlank @Email String email,@NotBlank String password){}
  public record UserResponse(UUID id,String firstName,String lastName,String email,String phoneNumber,String profilePhotoUrl,UserRole role,UserStatus status){}
  public record AuthResponse(String accessToken,String tokenType,long expiresIn,UserResponse user){}
- public record UpdateProfileRequest(@NotBlank @Size(max=80) String firstName,@NotBlank @Size(max=80) String lastName,@Size(max=30) String phoneNumber){}
+ public record UpdateProfileRequest(@NotBlank @Size(max=80) String firstName,@NotBlank @Size(max=80) String lastName,@Size(max=30) String phoneNumber,String profilePhotoKey){}
+ public record ChangePasswordRequest(@NotBlank String currentPassword,@NotBlank @Size(min=10,max=72) String newPassword,@NotBlank String confirmPassword){}
  public record ForgotPasswordRequest(@NotBlank @Email String email){}
  public record ResetPasswordRequest(@NotBlank String token,@NotBlank @Size(min=10,max=72) String password,@NotBlank String confirmPassword){}
  public record MessageResponse(String message){}
